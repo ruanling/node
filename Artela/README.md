@@ -1,10 +1,10 @@
 # Auto Install
 
-    wget -O art https://raw.githubusercontent.com/NodeValidatorVN/GuideNode/main/Artela/art && chmod +x art && ./art
+    wget -O art https://github.com/ruanling/node/blob/main/Artela/art && chmod +x art && /data/art
 
 Creat a wallet
 
-    artelad keys add wallet
+    artelad keys add wallet <name>
 
 Export wallet -> private key -> Import metamask
 
