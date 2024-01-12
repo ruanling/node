@@ -37,18 +37,18 @@ sudo apt install curl tar wget clang pkg-config libssl-dev libleveldb-dev jq bui
 echo -e "\e[1m\e[32m2. Installing GO--> \e[0m" && sleep 1
 #INSTALL GO
 ver="1.21.5" 
-cd $HOME 
+cd /data 
 wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz" 
 sudo rm -rf /usr/local/go 
 sudo tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz" 
 rm "go$ver.linux-amd64.tar.gz"
 
-echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile
-source $HOME/.bash_profile
+echo "export PATH=$PATH:/usr/local/go/bin:/data/go/bin" >> /data/.bash_profile
+source /data/.bash_profile
 
 echo -e "\e[1m\e[32m3. Downloading and building binaries--> \e[0m" && sleep 1
 
-cd $HOME
+cd /data
 rm -rf artela
 git clone https://github.com/artela-network/artela
 cd artela
@@ -58,20 +58,20 @@ make install
 artelad config chain-id $CHAIN_ID
 artelad init "$NODE_MONIKER" --chain-id $CHAIN_ID
 
-wget -O $HOME/.artelad/config/genesis.json "https://raw.githubusercontent.com/NodeValidatorVN/GuideNode/main/Artela/genesis.json"
-wget -O $HOME/.artelad/config/addrbook.json "https://raw.githubusercontent.com/NodeValidatorVN/GuideNode/main/Artela/addrbook.json"
+wget -O /data/.artelad/config/genesis.json "https://raw.githubusercontent.com/NodeValidatorVN/GuideNode/main/Artela/genesis.json"
+wget -O /data/.artelad/config/addrbook.json "https://raw.githubusercontent.com/NodeValidatorVN/GuideNode/main/Artela/addrbook.json"
 
 SEEDS=""
 PEERS="b23bc610c374fd071c20ce4a2349bf91b8fbd7db@65.108.72.233:11656"
-sed -i 's|^seeds *=.*|seeds = "'$SEEDS'"|; s|^persistent_peers *=.*|persistent_peers = "'$PEERS'"|' $HOME/.artelad/config/config.toml
+sed -i 's|^seeds *=.*|seeds = "'$SEEDS'"|; s|^persistent_peers *=.*|persistent_peers = "'$PEERS'"|' /data/.artelad/config/config.toml
 
-sed -i 's|^pruning *=.*|pruning = "custom"|g' $HOME/.artelad/config/app.toml
-sed -i 's|^pruning-keep-recent  *=.*|pruning-keep-recent = "100"|g' $HOME/.artelad/config/app.toml
-sed -i 's|^pruning-interval *=.*|pruning-interval = "10"|g' $HOME/.artelad/config/app.toml
-sed -i 's|^snapshot-interval *=.*|snapshot-interval = 0|g' $HOME/.artelad/config/app.toml
+sed -i 's|^pruning *=.*|pruning = "custom"|g' /data/.artelad/config/app.toml
+sed -i 's|^pruning-keep-recent  *=.*|pruning-keep-recent = "100"|g' /data/.artelad/config/app.toml
+sed -i 's|^pruning-interval *=.*|pruning-interval = "10"|g' /data/.artelad/config/app.toml
+sed -i 's|^snapshot-interval *=.*|snapshot-interval = 0|g' /data/.artelad/config/app.toml
 
-sed -i 's|^minimum-gas-prices *=.*|minimum-gas-prices = "0.025art"|g' $HOME/.artelad/config/app.toml
-sed -i 's|^prometheus *=.*|prometheus = true|' $HOME/.artelad/config/config.toml
+sed -i 's|^minimum-gas-prices *=.*|minimum-gas-prices = "0.025art"|g' /data/.artelad/config/app.toml
+sed -i 's|^prometheus *=.*|prometheus = true|' /data/.artelad/config/config.toml
 
 echo -e "\e[1m\e[32m4. Starting service and synchronization...--> \e[0m" && sleep 1
 
@@ -89,14 +89,16 @@ LimitNOFILE=10000
 WantedBy=multi-user.target
 EOF
 
-artelad tendermint unsafe-reset-all --home $HOME/.artelad --keep-addr-book
+artelad tendermint unsafe-reset-all --home /data/.artelad --keep-addr-book
 
-curl -L https://t-ss.nodeist.net/artela/snapshot_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.artelad --strip-components 2
+curl -L https://t-ss.nodeist.net/artela/snapshot_latest.tar.lz4 | lz4 -dc - | tar -xf - -C /data/.artelad --strip-components 2
 
 sudo systemctl daemon-reload
 sudo systemctl enable artelad
 sudo systemctl start artelad
-source $HOME/.bash_profile
+source /data/.bash_profile
+
+
 
 echo '=============== SETUP FINISHED ==================='
 echo -e "Check logs:            ${CYAN}sudo journalctl -u $BINARY_NAME -f --no-hostname -o cat ${NC}"
