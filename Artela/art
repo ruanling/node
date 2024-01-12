@@ -98,8 +98,6 @@ sudo systemctl enable artelad
 sudo systemctl start artelad
 source /data/.bash_profile
 
-
-
 echo '=============== SETUP FINISHED ==================='
 echo -e "Check logs:            ${CYAN}sudo journalctl -u $BINARY_NAME -f --no-hostname -o cat ${NC}"
 echo -e "Check synchronization: ${CYAN}$BINARY_NAME status 2>&1 | jq .SyncInfo.catching_up${NC}"
